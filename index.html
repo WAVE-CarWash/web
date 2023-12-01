@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAVE Car-Wash</title>
+
+    <!-- Agrega el script de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.3/firebase-database-compat.js"></script>
+
+    <style>
+		
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifyZAc98wPZENg3hDnTelu3gORy_h38b5ozjy7mAW6DR-AnJomhGNrPsRhasBQUxF8eoeTpPqsJgMkHRQcu_pbBlnklEIrs9KSQ8FggL15gkGQnMEHSncpMwQ6h5TB-c2sKYFAPajvI3XeHTfuRzO5icj6OCQ3AVzqqfQHtq0uFkodUkd5-gtzu7gF8ns/s16000/fondo.jpg'); /* Reemplaza con la URL de tu imagen en línea */
+            background-size: cover;
+            background-position: 0 -250px;
+            background-repeat: no-repeat;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7); /* Negro con opacidad de 0.7 */
+            padding: 10px;
+            text-align: right;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        h1 {
+            position: relative;
+        }
+
+        h1 img {
+            width: 100px; /* Ajusta el ancho de la imagen según sea necesario */
+            height: auto; /* Permite que la altura se ajuste proporcionalmente al ancho */
+            position: absolute;
+            top: 90px; /* Ajusta la posición vertical según sea necesario */
+            left: 20px; /* Ajusta la posición horizontal según sea necesario */
+        }
+
+        .slogan {
+			font-family: 'Lucida Console', monospace;
+            color: #fff;
+            text-align: center;
+            position: absolute;
+			font-size: 65px;
+            top: 370px; /* Ajusta la posición vertical según sea necesario */
+            left: 150px; /* Ajusta la posición horizontal según sea necesario */
+        }
+		
+		.tagline {
+            font-family: 'Lucida Console', monospace;
+            color: #fff;
+            text-align: center;
+            position: absolute;
+            font-size: 20px;
+            top: 460px; /* Ajusta la posición vertical según sea necesario */
+            left: 150px; /* Ajusta la posición horizontal según sea necesario */
+        }
+		
+        .contact-button {
+            position: absolute;
+            top: 500px; /* Ajusta la posición vertical según sea necesario */
+            left: 150px; /* Ajusta la posición horizontal según sea necesario */
+            padding: 15px 30px;
+            background-color: #f39c12; /* Naranja */
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+		
+        /* Estilos previos se mantienen aquí */
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+        .input-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .input-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+		
+
+		/* Estilos adicionales para el botón */
+		#agregar {
+			background-color: #f39c12; /* Naranja */
+			color: #fff; /* Texto blanco */
+			margin-top: 5px; /* Ajuste de espacio superior */
+			align-self: center; /* Centrar en el contenedor flex */
+			padding: 15px 30px;
+			border: none;
+			cursor: pointer;
+		}
+		/* Estilos específicos para el nuevo modal de contacto */
+		.contact-modal {
+			display: none; /* El modal estará oculto inicialmente */
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente */
+			justify-content: center;
+			align-items: center;
+		}
+
+		.contact-modal-content {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 5px;
+			max-width: 999px;
+			text-align: center;
+		}
+		
+		.close-button {
+			background-color: #f39c12;
+			color: #fff;
+			padding: 5px 10px;
+			border: none;
+			border-radius: 3px;
+			cursor: pointer;
+		}
+		
+    .contact-info {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .contact-item {
+        text-align: center;
+        margin-bottom: 20px; /* Ajusta según sea necesario para agregar más espacio vertical */
+        margin: 0 40px; /* Ajusta según sea necesario para agregar más espacio horizontal entre las imágenes */
+        padding: 10px; /* Ajusta según sea necesario para agregar más espacio horizontal y vertical dentro de cada elemento individual */
+    }
+
+    .contact-item img {
+        width: 50px; /* Ajusta según sea necesario */
+        height: 65px; /* Ajusta según sea necesario */
+    }
+
+		
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#">INICIO</a>
+        <a href="#">GALERÍA</a>
+        <a href="#">SERVICIOS</a>
+        <a href="#modal" onclick="openModal()">MEMBRESÍA</a>
+    </header>
+
+    <h1>
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirEq8XmRJf2gWX5cfoprir6NOaRqeZlp2gsKfpkx-JZ0KsVNEPvmpN6OtSHHPOOHEJAKnsyU9sBnRY3sXonDR02cTDO7an6_iQ6YG8d_1PxP4kFozficj-FRwFSkzZnqUu5sGHRpumRez4daOiKAk_OcglVM2uUJQ73KHXlyUoX-dBqsTn_dVQEkIBDJs/s16000/LOGO.png" alt="WAVE Car-Wash">
+        <div class="slogan">Consiente tu auto</div>
+    </h1>
+
+    <div class="tagline">El mejor autolavado de Cortazar, Gto.</div>
+	<button class="contact-button" onclick="openContactModal()">Contáctanos</button>
+
+	<div class="contact-modal" id="contactModal">
+		<div class="contact-modal-content">
+			<span class="close" onclick="closeContactModal()">&times;</span>
+			<!-- Imágenes y textos -->
+			<div class="contact-info">
+				<div class="contact-item">
+					<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjAeUI-3jsOvqJTOsDfwvxO8qkbTLK-HCIsQbLZOxFP4bCGhmC5OVu3sXt2YGbwtcnDJ6mVj3pZrPzXRe91FGWEJlMRvVE3FIjnpfdoXtZvDgZGq20ZbVLd4q9V1ejsDWTOh9EvZ-OHIKh0TTi87yrI_ximsCXgEuYQhJuQGd3DLFGwAfJ7cX3Vpbvb5Cw/s16000/telefono.png" alt="Teléfono">
+					<p>TELEFONO</p>
+					<p>4111154088</p>
+				</div>
+				<div class="contact-item">
+					<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXAiE5TIMPcN6wm5jamXAEjsb48fuRH5ldVkW6vupW3flS1Brx1WfEgKHoaAZJttBUGjCDbWKGkTbBnaRUv8qEdX4HE6APhjhdhCbGsidV9muQcFWtScytYprM6YB7Ai0OaZnp7TShaUZl_aRQe2qIxA5YF5DzPwacXlm4-QCl3GwHku1Y4svgkz4H9ec/s16000/correo.png" alt="Correo">
+					<p>CORREO</p>
+					<p>wave_carwash@gmail.com</p>
+				</div>
+				<div class="contact-item">
+					<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjr39mdVLYxkdG2enWpUyIFYzp44ai8VeZ60pSF2GSZHhx0nQOnwhE2wQwxgsaBDoKXz0NQoV0VYs27hQrRFC012yQMMrr9_cHuYgVOXPcNyYMCkYZJGvOxaIsADPPI3F91BXOJsF4DpqZUBuUyeg2cmk6OtTaiVuMcWbMtcrVavWxHmJypXsPKpmO_OJY/s16000/direccion.png" alt="Dirección">
+					<p>DIRECCIÓN</p>
+					<P>Av las Fuentes #307</p>
+					<p>Las Fuentes, Celaya, GTO.</p>
+					<p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="modal">
+		<div class="modal-content">
+			<span class="close" onclick="closeModal()">&times;</span>
+			<h2>REGISTRATE</h2>
+			<p>Vuelvete miembro de la familia WAVE</p>
+			<div class="input-container">
+				<input type="text" id="ingresaNombre" placeholder="Nombre">
+				<input type="text" id="ingresaCorreo" placeholder="Correo">
+				<input type="text" id="ingresaTelefono" placeholder="Teléfono">
+				<input type="text" id="ingresaDireccion" placeholder="Dirección">
+				<input type="text" id="ingresaNumtarjeta" placeholder="Número de tarjeta">
+				<div style="display: flex; justify-content: space-between;">
+					<input type="text" id="ingresaMesexpiracion" placeholder="Mes de expiración" style="width: 35%;">
+					<input type="text" id="ingresaAnoexpiracion" placeholder="Año de expiración" style="width: 35%;">
+					<input type="text" id="ingresaCvv" placeholder="CVV" style="width: 25%;">
+				</div>
+				<button id="agregar" onclick="AgregarDatos()">Registrarse</button>
+			</div>
+		</div>
+	</div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+		  apiKey: "AIzaSyCFlJZFMcc4A5uQ4cCY5eoXHXqYIR-hzxM",
+		  authDomain: "wave-car-wash-e12d4.firebaseapp.com",
+		  databaseURL: "https://wave-car-wash-e12d4-default-rtdb.firebaseio.com",
+		  projectId: "wave-car-wash-e12d4",
+		  storageBucket: "wave-car-wash-e12d4.appspot.com",
+		  messagingSenderId: "300955088869",
+		  appId: "1:300955088869:web:368930bd413cda4811a10c"
+		};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+		// Función para abrir el modal de contacto
+		function openContactModal() {
+			document.getElementById('contactModal').style.display = 'flex';
+		}
+
+		// Función para cerrar el modal de contacto
+		function closeContactModal() {
+			document.getElementById('contactModal').style.display = 'none';
+		}
+		
+        // Funciones de apertura y cierre del modal
+        function openModal() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+		function AgregarDatos() {
+			var ingresaNombre = document.getElementById("ingresaNombre").value;
+			var ingresaCorreo = document.getElementById("ingresaCorreo").value;
+			var ingresaTelefono = document.getElementById("ingresaTelefono").value;
+			var ingresaDireccion = document.getElementById("ingresaDireccion").value; // Nuevo campo
+			var ingresaNumtarjeta = document.getElementById("ingresaNumtarjeta").value;
+			var ingresaMesexpiracion = document.getElementById("ingresaMesexpiracion").value;
+			var ingresaAnoexpiracion = document.getElementById("ingresaAnoexpiracion").value;
+			var ingresaCvv = document.getElementById("ingresaCvv").value;
+
+			// Guardar datos en la base de datos
+			db.ref("Usuarios/" + ingresaNombre).set({
+					Nombre: ingresaNombre,
+					Correo: ingresaCorreo,
+					Numero: ingresaTelefono,
+					Direccion: ingresaDireccion,
+					NumeroTarjeta: ingresaNumtarjeta,
+					Mes: ingresaMesexpiracion,
+					Ano: ingresaAnoexpiracion,
+					CVV: ingresaCvv
+				})
+				.then(() => {
+					alert("Usuario guardado correctamente");
+					closeModal(); // Cerrar modal después de guardar
+				})
+				.catch((error) => {
+					alert(error.message);
+				});
+		}
+    </script>
+</body>
+
+</html>
